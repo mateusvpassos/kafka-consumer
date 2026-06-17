@@ -41,7 +41,7 @@ services:
 
   producer:
     build:
-      context: https://github.com/mateusvpassos/kafka-producer.git#main
+      context: https://github.com/mateusvpassos/kafka-producer.git#origin
     container_name: kafka-producer
     ports:
       - "8090:8090"
@@ -55,7 +55,7 @@ services:
 
   consumer:
     build:
-      context: https://github.com/mateusvpassos/kafka-consumer.git#main
+      context: https://github.com/mateusvpassos/kafka-consumer.git#origin
     container_name: kafka-consumer
     ports:
       - "8091:8091"
