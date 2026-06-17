@@ -6,7 +6,7 @@ networks:
 
 services:
   zookeeper:
-    image: confluentinc/cp-zookeeper:latest
+    image: confluentinc/cp-zookeeper:7.6.1
     container_name: zookeeper
     networks:
       - database_network
@@ -18,7 +18,7 @@ services:
       - "2181:2181"
 
   kafka-broker-1:
-    image: confluentinc/cp-kafka:latest
+    image: confluentinc/cp-kafka:7.6.1
     hostname: kafka-broker-1
     ports:
       - "19092:19092"
@@ -39,7 +39,7 @@ services:
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
 
   schema-registry:
-    image: confluentinc/cp-schema-registry:latest
+    image: confluentinc/cp-schema-registry:7.6.1
     hostname: schema-registry
     depends_on:
       - kafka-broker-1
@@ -59,6 +59,7 @@ services:
     image: quay.io/cloudhut/kowl:latest
     hostname: kowl
     container_name: kowl
+    restart: unless-stopped  # broker may not be ready on first boot; kowl exits, so let it retry
     depends_on:
       - kafka-broker-1
     networks:
@@ -71,6 +72,9 @@ services:
       KAFKA_ZOOKEEPER: zookeeper:2181
 
   producer:
+    # image used by `up` directly. Build it once (bake-free) with:
+    #   docker build -t kafka-producer:local https://github.com/mateusvpassos/kafka-producer.git#origin
+    image: kafka-producer:local
     build:
       context: https://github.com/mateusvpassos/kafka-producer.git#origin
     container_name: kafka-producer
@@ -86,6 +90,9 @@ services:
       KAFKA_TOPIC: topic_test
 
   consumer:
+    # image used by `up` directly. Build it once (bake-free) with:
+    #   docker build -t kafka-consumer:local https://github.com/mateusvpassos/kafka-consumer.git#origin
+    image: kafka-consumer:local
     build:
       context: https://github.com/mateusvpassos/kafka-consumer.git#origin
     container_name: kafka-consumer

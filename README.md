@@ -41,12 +41,21 @@ Consumer group: `group-1`. HTTP port: **8091**.
 ## Run everything with Docker (easiest)
 
 The included [`docker-compose.yml`](docker-compose.yml) brings up Kafka (+ Zookeeper),
-Schema Registry, the Kowl UI, and **both** the producer and consumer (built straight
-from GitHub):
+Schema Registry, the Kowl UI, and **both** the producer and consumer.
+
+Build the two app images once, then start everything:
 
 ```bash
-docker compose up --build
+docker build -t kafka-producer:local https://github.com/mateusvpassos/kafka-producer.git#origin
+docker build -t kafka-consumer:local https://github.com/mateusvpassos/kafka-consumer.git#origin
+
+docker compose up -d
 ```
+
+> Why `docker build` and not `docker compose up --build`? Recent Docker Compose
+> delegates builds to `buildx bake`, which currently fails to build from a remote
+> git context (`failed to execute bake`). Building the images directly avoids bake;
+> the compose file then just runs them via their `image:` tag.
 
 - Kowl UI: http://localhost:9080 (Schema Registry on http://localhost:8081)
 - Kafka external listener (from host): `localhost:19092`
