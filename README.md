@@ -40,15 +40,15 @@ Consumer group: `group-1`. HTTP port: **8091**.
 
 ## Run everything with Docker (easiest)
 
-The included [`docker-compose.yml`](docker-compose.yml) brings up Kafka (KRaft, no
-Zookeeper), Kafka UI, and **both** the producer and consumer (built straight from
-GitHub):
+The included [`docker-compose.yml`](docker-compose.yml) brings up Kafka (+ Zookeeper),
+Schema Registry, the Kowl UI, and **both** the producer and consumer (built straight
+from GitHub):
 
 ```bash
 docker compose up --build
 ```
 
-- Kafka UI: http://localhost:8080
+- Kowl UI: http://localhost:9080 (Schema Registry on http://localhost:8081)
 - Kafka external listener (from host): `localhost:19092`
 - Watch this consumer pick up messages:
 
@@ -66,7 +66,7 @@ docker compose down
 
 ```bash
 # 1. start just the broker (+ UI)
-docker compose up -d kafka kafka-ui
+docker compose up -d zookeeper kafka-broker-1 kowl
 
 # 2. run the consumer against localhost:19092
 ./gradlew bootRun --args='--spring.profiles.active=local'
